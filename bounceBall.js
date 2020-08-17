@@ -1,4 +1,10 @@
 var myCanvas = document.getElementById("canvas"); 
+var ctx = myCanvas.getContext("2d");
+
+//Center the canvas based on canvas width
+var bodyElement = document.getElementById("body").style; 
+bodyElement.marginLeft = ((window.innerWidth - ctx.canvas.width) / 2).toString() + "px"; 
+bodyElement.marginTop = ((window.innerHeight - ctx.canvas.height) / 2).toString() + "px"; 
 
 //Module Aliases
 var Engine = Matter.Engine,
@@ -10,6 +16,7 @@ var Engine = Matter.Engine,
     MouseConstraint = Matter.MouseConstraint,
     SAT = Matter.SAT;
 
+    
 //Engine and Renderer
 var engine = Engine.create(),
     world = engine.world;
@@ -19,26 +26,30 @@ var render = Render.create({
     engine: engine,
     canvas: myCanvas,
     options: {
-        width: 1500,
-        height: 700,
+        width: ctx.height,
+        height: ctx.width,
         showCollisions: true,
         showConvexHulls: true
     }
 });
 
-Render.run(render);
-Engine.run(engine); 
+Render.run(render); 
+Engine.run(engine);
+
+console.log (bodyElement.left); 
+
+var wallThickness = 200; 
 
 //Player ball and game ball
-var controllerBall = Bodies.circle(750, 500, 50, {restitution: 1.35}),
-    bounceBall = Bodies.circle(750, 100, 10, {isStatic: true});
+var controllerBall = Bodies.circle(ctx.canvas.width / 2, ctx.canvas.height * 2/3, 50, {restitution: 1.35}),
+    bounceBall = Bodies.circle(ctx.canvas.width / 2, ctx.canvas.height * 4/15, 10, {isStatic: true});
 
     
 //Walls: Increased thickness to help with collision detection
-var roof = Bodies.rectangle(750, -100, 1500, 200, { isStatic: true }),
-    floor = Bodies.rectangle(750, 800, 1500, 200, { isStatic: true }),
-    leftWall = Bodies.rectangle(-100, 350, 200, 700, { isStatic: true }),
-    rightWall = Bodies.rectangle(1600, 350, 200, 700, { isStatic: true });
+var roof = Bodies.rectangle(ctx.canvas.width / 2, -wallThickness/2, ctx.canvas.width, wallThickness, { isStatic: true }),
+    floor = Bodies.rectangle(ctx.canvas.width / 2, ctx.canvas.height + wallThickness / 2, ctx.canvas.width, wallThickness, { isStatic: true }),
+    leftWall = Bodies.rectangle(-wallThickness / 2, ctx.canvas.height / 2, wallThickness, ctx.canvas.height, { isStatic: true }),
+    rightWall = Bodies.rectangle(ctx.canvas.width + wallThickness / 2, ctx.canvas.height / 2, wallThickness, ctx.canvas.height, { isStatic: true });
 
 
 //Adding bodies to the world

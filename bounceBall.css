@@ -1,6 +1,12 @@
 #timerContainer {
     position: absolute; 
-    left: 30px;
     font-size: 20px;
     color: white;
+    margin-left: 10px;
 }
+
+
+body {
+    background-color: purple;
+}
+  
