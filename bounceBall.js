@@ -58,53 +58,13 @@ World.add(world, [controllerBall, bounceBall, roof, floor, leftWall,rightWall]);
 
 //Variables
 var startTimer = false; 
+var gameOver = false; 
 var secondsBeforeDrag = 0;
-
+var secondsAfterDrag = 0; 
+var minutes = 0; 
+var seconds = 0; 
 
 engine.world.gravity.y = 0;
-
-
-Events.on(engine, 'afterUpdate', function(event) {
-
-    //Ball GameOver Collisions 
-    const collisionsList = [
-        SAT.collides(bounceBall, floor), 
-        SAT.collides(bounceBall, roof), 
-        SAT.collides(bounceBall, leftWall), 
-        SAT.collides(bounceBall, rightWall),
-        SAT.collides(controllerBall, floor), 
-        SAT.collides(controllerBall, roof), 
-        SAT.collides(controllerBall, leftWall), 
-        SAT.collides(controllerBall, rightWall)
-    ];
-    
-    var secondsAfterDrag = 0; 
-    var minutes = 0; 
-    var seconds = 0; 
-
-    if (startTimer){
-        secondsAfterDrag = Math.floor(engine.timing.timestamp/1000) - secondsBeforeDrag; 
-        minutes = Math.floor(secondsAfterDrag/60); 
-        seconds = secondsAfterDrag - (minutes * 60); 
-        document.getElementById("timer").innerHTML = seconds < 10 ? minutes.toFixed(0) + ":0" + seconds.toFixed(0) : minutes.toFixed(0) + ":" + seconds.toFixed(0);
-     }
-     else {
-        secondsBeforeDrag = Math.floor(engine.timing.timestamp/1000);
-     }
-
-     console.log(seconds); 
-
-     //Check if game ending collision occurs and ends object movement
-     collisionsList.forEach(function(collision) {
-        if (collision.collided){
-            Body.setStatic(bounceBall, true); 
-            Body.setStatic(controllerBall, true); 
-            startTimer = false; 
-        }
-     });
-});
-
-
 
 //Mouse Control
 var mouse = MouseConstraint.create(engine, {
@@ -118,21 +78,97 @@ var mouse = MouseConstraint.create(engine, {
 
 World.add(world, mouse);
 
-
-
 Events.on(mouse, "startdrag", function() { 
 
-    if (mouse.body == controllerBall && !startTimer) {
+    if (mouse.body == controllerBall && !startTimer && !gameOver) {
         startTimer = true; 
         engine.world.gravity.y = 1; 
         Body.setStatic(bounceBall, false); 
     }
 });
     
+Events.on(engine, 'afterUpdate', function(event) {
     
+    console.log(bounceBall.position.x);
+
+    updateTimer(); 
+
+    if (wallCollision()) {
+        setGameOver(); 
+    }
+});
+
+function updateTimer () {
+
+    if (startTimer){
+        secondsAfterDrag = Math.floor(engine.timing.timestamp/1000) - secondsBeforeDrag; 
+        minutes = Math.floor(secondsAfterDrag/60); 
+        seconds = secondsAfterDrag - (minutes * 60); 
+        document.getElementById("timer").innerHTML = seconds < 10 ? minutes.toFixed(0) + ":0" + seconds.toFixed(0) : minutes.toFixed(0) + ":" + seconds.toFixed(0);
+     }
+     else {
+        secondsBeforeDrag = Math.floor(engine.timing.timestamp/1000);
+     }
+}
+
+function wallCollision() {
+    //Ball GameOver Collisions 
+    const collisionsList = [
+        SAT.collides(bounceBall, floor), 
+        SAT.collides(bounceBall, roof), 
+        SAT.collides(bounceBall, leftWall), 
+        SAT.collides(bounceBall, rightWall),
+        SAT.collides(controllerBall, floor), 
+        SAT.collides(controllerBall, roof), 
+        SAT.collides(controllerBall, leftWall), 
+        SAT.collides(controllerBall, rightWall)
+    ];
+
+     //Check if game ending collision occurs and ends object movement
+     collisionsList.forEach(function(collision) {
+        if (collision.collided){
+            setGameOver(); 
+        }
+     });
+}
+
+
+function setGameOver() {
+    gameOver = true; 
+    startTimer = false; 
+    resetVelocity(); 
+    engine.world.gravity.y = 0; 
+
+    document.getElementById("gameOverContainer").style.display = "inline";
+    document.getElementById("time").innerHTML = "You were alive for " + (seconds < 10 ? minutes.toFixed(0) + ":0" + seconds.toFixed(0) : minutes.toFixed(0) + ":" + seconds.toFixed(0));
+}
+
+document.getElementById("playAgain").addEventListener("click", function() {
+    resetGame(); 
+});
+
+function resetGame() {
+    gameOver = false; 
+
+
+    Body.setPosition(controllerBall, {x: ctx.canvas.width / 2, y: ctx.canvas.height * 2/3});
+    Body.setPosition(bounceBall, {x: ctx.canvas.width / 2, y: ctx.canvas.height * 4/15});
+    resetVelocity(); 
+    Body.setStatic(bounceBall, true); 
+
+    engine.timing.timestamp = 0; 
+    secondsBeforeDrag = 0;
+    secondsAfterDrag = 0; 
+    minutes = 0; 
+    seconds = 0; 
 
     
+    document.getElementById("timer").innerHTML = "0:00"
+    document.getElementById("gameOverContainer").style.display = "none";
 
+}
 
-
-
+function resetVelocity() {
+    Body.setVelocity(controllerBall, {x: 0, y: 0}); 
+    Body.setVelocity(bounceBall, {x: 0, y: 0});
+}
