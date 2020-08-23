@@ -5,9 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kinematics Simulator</title>
 
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+    https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-analytics.js"></script> 
+
 
     <link rel="stylesheet" href="bounceBall.css">
     <script src="matter.js"></script>
+    <script src="scoreDatabase.js" defer type = "module"></script>
+    
 </head>
 
 
@@ -18,8 +29,15 @@
     </div>  
 
     <div id = "gameOverContainer">
-        <h1 id = "gameOver">Game Over</h1><br>
+        <h1 id = "gameOver">Game Over</h1>
         <p id = "time"></p><br> 
+
+        <div id = "highScoreContainer">
+            <h2>You Got a HIGH SCORE</h2>
+            <p>Input your initials below:</p> <br>
+            <input type = text id = "initialsInput" maxlength="3"><br><br>
+            <button id = "scoreSubmit">Submit</button><br><br>
+        </div>
 
         <button id = playAgain>Play Again</button>
     </div>
@@ -28,8 +46,7 @@
 
 
 </body>
-
-<script src="bounceBall.js"></script>
+<script src="bounceBall.js" defer type = "module"></script>
 
 
 </html>

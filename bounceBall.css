@@ -31,3 +31,21 @@ body {
 #time {
     font-size: 30px;
 }
+
+#playAgain {
+    background-color: white;
+    color: rgb(3, 20, 73);
+
+    font-size: 32px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    text-align: center;
+    cursor: pointer;
+
+    min-width: 200px; 
+    min-height: 50px;
+}
+
+#playAgain:hover {
+    transform: scale(1.2);
+    transition: 0.3s; 
+}

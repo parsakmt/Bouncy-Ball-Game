@@ -1,3 +1,4 @@
+//Matter.js Canvas Game 
 var myCanvas = document.getElementById("canvas"); 
 var ctx = myCanvas.getContext("2d");
 
@@ -36,8 +37,6 @@ var render = Render.create({
 Render.run(render); 
 Engine.run(engine);
 
-console.log (bodyElement.left); 
-
 var wallThickness = 200; 
 
 //Player ball and game ball
@@ -63,6 +62,7 @@ var secondsBeforeDrag = 0;
 var secondsAfterDrag = 0; 
 var minutes = 0; 
 var seconds = 0; 
+var timeSurvived = "0:00"; 
 
 engine.world.gravity.y = 0;
 
@@ -89,8 +89,6 @@ Events.on(mouse, "startdrag", function() {
     
 Events.on(engine, 'afterUpdate', function(event) {
     
-    console.log(bounceBall.position.x);
-
     updateTimer(); 
 
     if (wallCollision()) {
@@ -98,13 +96,15 @@ Events.on(engine, 'afterUpdate', function(event) {
     }
 });
 
+//Functions
 function updateTimer () {
 
     if (startTimer){
         secondsAfterDrag = Math.floor(engine.timing.timestamp/1000) - secondsBeforeDrag; 
         minutes = Math.floor(secondsAfterDrag/60); 
         seconds = secondsAfterDrag - (minutes * 60); 
-        document.getElementById("timer").innerHTML = seconds < 10 ? minutes.toFixed(0) + ":0" + seconds.toFixed(0) : minutes.toFixed(0) + ":" + seconds.toFixed(0);
+        timeSurvived = seconds < 10 ? minutes.toFixed(0) + ":0" + seconds.toFixed(0) : minutes.toFixed(0) + ":" + seconds.toFixed(0);
+        document.getElementById("timer").innerHTML = timeSurvived;
      }
      else {
         secondsBeforeDrag = Math.floor(engine.timing.timestamp/1000);
@@ -140,12 +140,9 @@ function setGameOver() {
     engine.world.gravity.y = 0; 
 
     document.getElementById("gameOverContainer").style.display = "inline";
-    document.getElementById("time").innerHTML = "You were alive for " + (seconds < 10 ? minutes.toFixed(0) + ":0" + seconds.toFixed(0) : minutes.toFixed(0) + ":" + seconds.toFixed(0));
+    document.getElementById("highScoreContainer").style.display = "inline";
+    document.getElementById("time").innerHTML = "You were alive for " + timeSurvived;
 }
-
-document.getElementById("playAgain").addEventListener("click", function() {
-    resetGame(); 
-});
 
 function resetGame() {
     gameOver = false; 
@@ -172,3 +169,15 @@ function resetVelocity() {
     Body.setVelocity(controllerBall, {x: 0, y: 0}); 
     Body.setVelocity(bounceBall, {x: 0, y: 0});
 }
+
+ export function submitScore() {
+    return {
+        initials: document.getElementById("initialsInput").value, 
+        score: timeSurvived
+    };
+}
+
+//Listeners
+document.getElementById("playAgain").addEventListener("click", function() {
+    resetGame(); 
+});
