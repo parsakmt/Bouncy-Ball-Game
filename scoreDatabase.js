@@ -1,4 +1,4 @@
-import { submitScore } from "./bounceBall.js"; 
+import { submitScore, timeSurvived } from "./bounceBall.js"; 
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -16,26 +16,69 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
+
+
 const dbRefHighScores = firebase.database().ref();
 var scoreInfo;
-
 var scoreDataSubmitButton = document.getElementById("scoreSubmit");
 
 scoreDataSubmitButton.addEventListener("click", function() {
+
     scoreInfo = submitScore(); 
     
+    dbRefHighScores.orderByChild("score").limitToFirst(1).once("value", function(snapshot){
+        var entry = snapshot.val(); 
+        var index = Object.keys(entry)[0]; 
+
+        //Remove the previous high score from the database
+        firebase.database().ref().child(index).remove(); 
+    });
+    
+    //Hide the input container
     document.getElementById("highScoreContainer").style.display = "none";
     document.getElementById("initialsInput").value = "";
     
+
     //Push data into the firebase database
     dbRefHighScores.push(scoreInfo); 
 
-    //dbRefHighScores.on("value", isHighScore); 
+    setCurrentHighScore(); 
 });
 
-function isHighScore(snapshot) {
-    //console.log(scoreInfo.score); 
-    snapshot.forEach(function(key) {
-        //console.log(key.val().score); 
+export function checkForHighScore() {
+    dbRefHighScores.orderByChild("score").limitToLast(1).once("value", function(snapshot){
+        var entry = snapshot.val(); 
+        var index = Object.keys(entry)[0]; 
+
+        if(entry[index].score < timeSurvived) {
+            document.getElementById("highScoreContainer").style.display = "inline";
+        }
+        else {
+            document.getElementById("highScoreContainer").style.display = "none";
+         }
+    });
+
+    setCurrentHighScore(); 
+
+}
+
+function setCurrentHighScore() {
+    dbRefHighScores.orderByChild("score").limitToLast(1).once("value", function(snapshot){
+        var entry = snapshot.val(); 
+        var index = Object.keys(entry)[0]; 
+
+         if (document.getElementById("highScoreContainer").style.display == "inline") {
+            document.getElementById("currentHighScore").style.display = "none";
+        }
+        else {
+            document.getElementById("currentHighScore").style.display = "inline";
+            document.getElementById("timeHighScore").innerHTML = entry[index].score;
+            document.getElementById("initialsHighScore").innerHTML = entry[index].initials; 
+        }
     });
 }
+
+
+
+
+

@@ -18,10 +18,14 @@ body {
     left: 0; 
     right: 0; 
     top: 0;
-    bottom: 50%; 
+    bottom: 60%; 
     margin: auto; 
     text-align: center;
     padding: 0px 10px 40px 10px; 
+}
+
+#highScoreContainer {
+    display: none;
 }
 
 #gameOver {
@@ -48,4 +52,8 @@ body {
 #playAgain:hover {
     transform: scale(1.2);
     transition: 0.3s; 
+}
+
+#currentHighScore {
+    font-size: 32px; 
 }

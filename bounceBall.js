@@ -1,3 +1,6 @@
+import { checkForHighScore } from "./scoreDatabase.js"; 
+
+
 //Matter.js Canvas Game 
 var myCanvas = document.getElementById("canvas"); 
 var ctx = myCanvas.getContext("2d");
@@ -62,7 +65,7 @@ var secondsBeforeDrag = 0;
 var secondsAfterDrag = 0; 
 var minutes = 0; 
 var seconds = 0; 
-var timeSurvived = "0:00"; 
+export var timeSurvived = "0:00"; 
 
 engine.world.gravity.y = 0;
 
@@ -140,8 +143,10 @@ function setGameOver() {
     engine.world.gravity.y = 0; 
 
     document.getElementById("gameOverContainer").style.display = "inline";
-    document.getElementById("highScoreContainer").style.display = "inline";
     document.getElementById("time").innerHTML = "You were alive for " + timeSurvived;
+
+    //Checks for highscore and displays the highScoreContainer if true
+    checkForHighScore(); 
 }
 
 function resetGame() {
