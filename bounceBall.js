@@ -69,6 +69,9 @@ export var timeSurvived = "0:00";
 
 engine.world.gravity.y = 0;
 
+//Time Scaling to fix a Matter.js engine issue
+engine.timing.timeScale = 0.24;
+
 //Mouse Control
 var mouse = MouseConstraint.create(engine, {
         constraint: {
